@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidney Function Test (KFT)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .img img {
+            height: 80px;
+            width: 150px;
+        }
+
+        .nav {
+            margin-left: 25%;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .result h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="img">
+            <img src="public\images\medlogo.png" alt="Medical Logo">
+        </div>
+        <div class="nav">KIDNEY FUNCTION TEST</div>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="main">
+        <div>
+            <a href="tests">Tests</a> > <a href="kft">Kidney Function Test</a>
+        </div>
+        <p class="parameters">
+            <!-- KFT Form -->
+            <form id="kft-form" method="post">
+                <label for="serum-creatinine">Serum Creatinine (mg/dL)</label>
+                <input type="text" id="serum-creatinine" placeholder="Enter Serum Creatinine level">
+            
+                <label for="blood-urea-nitrogen">Blood Urea Nitrogen (BUN) (mg/dL)</label>
+                <input type="text" id="blood-urea-nitrogen" placeholder="Enter Blood Urea Nitrogen level">
+            
+                <label for="uric-acid">Uric Acid (mg/dL)</label>
+                <input type="text" id="uric-acid" placeholder="Enter Uric Acid level">
+            
+                <label for="egfr">Estimated Glomerular Filtration Rate (eGFR) (mL/min/1.73m²)</label>
+                <input type="text" id="egfr" placeholder="Enter eGFR level">
+            
+                <label for="albumin-creatinine-ratio">Albumin-Creatinine Ratio (mg/g)</label>
+                <input type="text" id="albumin-creatinine-ratio" placeholder="Enter Albumin-Creatinine Ratio">
+            
+                <label for="total-protein-kft">Total Protein (g/dL)</label>
+                <input type="text" id="total-protein-kft" placeholder="Enter Total Protein level">
+            
+                <button type="button" id="btn" onclick="calculateKFT()">Submit</button>
+            </form>
+            
+
+            <!-- Result Section -->
+            <div class="result" id="kft-result">
+                <h4>Report</h4>
+                <p id="kft-report"></p>
+                <p id="kft-suggestion"></p>
+            </div>
+        </p>
+    </div>
+
+    <script>
+        function calculateKFT() {
+            // Get input values
+            const inputs = {
+                "Serum Creatinine": document.getElementById("serum-creatinine").value,
+                "Blood Urea Nitrogen (BUN)": document.getElementById("blood-urea-nitrogen").value,
+                "Uric Acid": document.getElementById("uric-acid").value,
+                "Estimated Glomerular Filtration Rate (eGFR)": document.getElementById("egfr").value,
+                "Albumin-Creatinine Ratio": document.getElementById("albumin-creatinine-ratio").value,
+                "Total Protein": document.getElementById("total-protein-kft").value,
+            };
+    
+            // Define normal ranges
+            const normalRanges = {
+                "Serum Creatinine": { min: 0.6, max: 1.2 },
+                "Blood Urea Nitrogen (BUN)": { min: 7, max: 20 },
+                "Uric Acid": { min: 3.5, max: 7.2 },
+                "Estimated Glomerular Filtration Rate (eGFR)": { min: 90, max: 120 },
+                "Albumin-Creatinine Ratio": { min: 0, max: 30 },
+                "Total Protein": { min: 6.0, max: 8.3 },
+            };
+    
+            let report = "Normal";
+            let suggestion = "Maintain a healthy lifestyle.";
+            let abnormalTests = [];
+    
+            // Validate inputs
+            for (const [test, value] of Object.entries(inputs)) {
+                const numericValue = parseFloat(value);
+                if (isNaN(numericValue)) {
+                    alert(`Please enter a valid value for ${test}.`);
+                    return;
+                }
+    
+                const { min, max } = normalRanges[test];
+                if (numericValue < min || numericValue > max) {
+                    abnormalTests.push(`${test}: ${numericValue} (Normal range: ${min}-${max})`);
+                    report = "Abnormal Kidney Function";
+                    suggestion = "Consult a doctor for further evaluation and advice.";
+                }
+            }
+    
+            // Display the result
+            const abnormalList = abnormalTests.length
+                ? `<strong>Abnormal Tests:</strong><br>${abnormalTests.join("<br>")}`
+                : "All tests are within the normal range.";
+    
+            document.getElementById("kft-report").innerHTML = `
+                <strong>Status:</strong> ${report}<br>
+                ${abnormalList}
+            `;
+            document.getElementById("kft-suggestion").innerHTML = `<strong>Suggestion:</strong> ${suggestion}`;
+            document.getElementById("kft-result").style.display = "block";
+        }
+    </script>
+    
+</body>
+</html>
