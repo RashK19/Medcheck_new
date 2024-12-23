@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Mass Index</title>
+    <style>
+        /* CSS Styling (same as before) */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .img img {
+            height: 80px;
+            width: 150px;
+        }
+
+        .nav {
+            margin-left: 25%;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .main {
+            padding: 20px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none; /* Initially hidden */
+        }
+
+        .result h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="img">
+            <img src="/images/medlogo.png" alt="Medical Logo">
+        </div>
+        <div class="nav">BODY MASS INDEX</div>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="main">
+        <div>
+            <a href="tests">Tests</a> > <a href="bmi">Body Mass Index</a>
+        </div>
+        <p class="parameters">
+            <!-- Body Mass Index Form -->
+            <form id="bmi-form" method="post">
+                <label for="weight">Weight (kg)</label>
+                <input type="text" id="weight" placeholder="Enter your weight in kg">
+
+                <label for="height">Height (cm)</label>
+                <input type="text" id="height" placeholder="Enter your height in cm">
+
+                <label for="gender">Gender</label>
+                <select id="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+
+                <div id="pregnancy-section" style="display:none;">
+                    <label for="pregnant">Are you pregnant?</label>
+                    <select id="pregnant">
+                        <option value="no">No</option>
+                        <option value="yes">Yes</option>
+                    </select>
+                </div>
+
+                <button type="button" id="btn" onclick="calculateBMI()">Submit</button>
+            </form>
+
+            <!-- Result Section -->
+            <div class="result" id="calc">
+                <h4>BMI Report</h4>
+                <p id="bmi-report"></p>
+                <p id="bmi-suggestion"></p>
+                <p id="food-suggestions"></p>
+            </div>
+        </p>
+    </div>
+
+    <script>
+        // Show pregnancy section if gender is female
+        document.getElementById('gender').addEventListener('change', function() {
+            if (this.value === 'female') {
+                document.getElementById('pregnancy-section').style.display = 'block';
+            } else {
+                document.getElementById('pregnancy-section').style.display = 'none';
+            }
+        });
+
+        function calculateBMI() {
+            // Get input values
+            const weight = document.getElementById("weight").value;
+            const height = document.getElementById("height").value;
+            const gender = document.getElementById("gender").value;
+            const pregnant = gender === "female" ? document.getElementById("pregnant").value : "no";
+
+            // Simple validation
+            if (!weight || !height || !gender) {
+                alert("Please enter all fields.");
+                return;
+            }
+
+            // Convert input to numbers
+            const weightValue = parseFloat(weight);
+            const heightValue = parseFloat(height);
+
+            if (isNaN(weightValue) || isNaN(heightValue)) {
+                alert("Please enter valid numeric values.");
+                return;
+            }
+
+            // Convert height from cm to meters
+            const heightInMeters = heightValue / 100;
+
+            // Calculate BMI
+            const bmi = weightValue / (heightInMeters * heightInMeters);
+
+            // Determine BMI status and suggestion
+            let status = "";
+            let suggestion = "";
+            let foodSuggestions = "";
+
+            if (bmi < 18.5) {
+                status = "Underweight";
+                suggestion = "Consider gaining weight by eating a balanced diet and exercising.";
+                foodSuggestions = "Suggested Foods: Protein-rich foods (chicken, fish, tofu), healthy fats (avocados, nuts), and carbohydrate-rich foods (whole grains, potatoes).";
+            } else if (bmi >= 18.5 && bmi < 24.9) {
+                status = "Normal weight";
+                suggestion = "Maintain your current weight through a healthy lifestyle.";
+                foodSuggestions = "Suggested Foods: Lean proteins (chicken, turkey, beans), whole grains (brown rice, quinoa), fruits and vegetables (spinach, berries), and healthy fats (olive oil, almonds).";
+            } else if (bmi >= 25 && bmi < 29.9) {
+                status = "Overweight";
+                suggestion = "Try to adopt a healthy diet and regular exercise routine.";
+                foodSuggestions = "Suggested Foods: Lean proteins (chicken, fish), non-starchy vegetables (leafy greens, bell peppers), and whole grains (brown rice, quinoa). Avoid sugary snacks.";
+            } else {
+                status = "Obesity";
+                suggestion = "It is recommended to consult a healthcare provider for a weight management plan.";
+                foodSuggestions = "Suggested Foods: High-protein, low-carb foods (chicken, fish, tofu), low-calorie vegetables (leafy greens, cucumbers), and healthy fats (avocados, olive oil). Avoid processed foods.";
+            }
+
+            // Add pregnancy-specific suggestions if female and pregnant
+            if (gender === "female" && pregnant === "yes") {
+                foodSuggestions += "<br>For pregnancy, it's important to ensure you're getting enough folic acid, iron, and calcium. Suggested foods: Leafy greens, eggs, fortified cereals, dairy products, and lean meats.";
+            }
+
+            // Display the result
+            document.getElementById("bmi-report").innerHTML = `Your BMI: ${bmi.toFixed(2)}<br>Status: ${status}`;
+            document.getElementById("bmi-suggestion").innerHTML = `Suggestions: ${suggestion}`;
+            document.getElementById("food-suggestions").innerHTML = foodSuggestions;
+            document.getElementById("calc").style.display = "block";
+        }
+    </script>
+</body>
+</html>
