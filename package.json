@@ -1,0 +1,27 @@
+{
+  "name": "medcheck_new",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RashK19/Medcheck_new.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RashK19/Medcheck_new/issues"
+  },
+  "homepage": "https://github.com/RashK19/Medcheck_new#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^4.21.2",
+    "hbs": "^4.2.0",
+    "mongodb": "^6.12.0",
+    "mongoose": "^8.9.2",
+    "node": "^23.5.0"
+  }
+}
